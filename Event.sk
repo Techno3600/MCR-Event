@@ -1,0 +1,45 @@
+options:
+	module:Event
+	moduledev:Torksi
+	modulever: 1.0
+
+on load:
+
+	if {mineplex.modulesapi.online} is true:
+		loop {mineplex::modules::*}:
+			if loop-value is "{@module}":
+				delete  {mineplex::modules::%loop-index%}
+		add "{@module}" to {mineplex::modules::*}
+	else:
+		broadcast "&9MCR Modules> &7Error when enabling &e{@module} {@modulever}&7 by &e{@moduledev}&7: MCR is not loaded or not updated to &eMCR 2.2&7!"
+
+on load:
+	set {torksi.event.loader} to now	
+
+on load:
+	set {_t} to difference between {torksi.event.loader} and now
+	message "&9Event> &7Enabled in &a%{_t}%" to all players
+
+command /event <string> [<string>] [<string>]:
+	usage: &9Do /event help
+	aliases: /e
+	permission: mineplex.admin
+	permission message: &9Permissions> &7This requires Permission Rank [&9ADMIN&7].
+	trigger:
+		if arg-1 is "help":
+			send "&9Event> &7Displaying Commands:" to player
+			send "&f/e settings: &eView Settings Help" to player
+			send "&f/e tp: &eTeleport to Target" to player
+			send "&f/e tp here: &eTeleport Target to Self" to player
+			send "&f/e tp all: &eTeleport Everyone to Self" to player
+			send "&f/e gadget: &eToggle Gadgets" to player
+			send "&f/e gadget list: &eLists Gadgets (Shows Whitelist)" to player
+			send "&f/e gadget <Gadget>: &eToggle Whitelist for Gadget" to player
+			send "&f/e gadget clear: &eClears Gadget Whitelist" to player
+			send "&f/e silence: &eSilence Chat" to player
+			send "&f/e admin [Player]: &eToggle Event Admin" to player
+			send "&f/e gm [Player]: &eToggle Creative Mode" to player
+			send "&f/e radius: &eToggle Forcefield" to player
+			send "&f/e give: &eGive Item" to player
+			send "&f/e mob: &eSummon Mob" to player
+
