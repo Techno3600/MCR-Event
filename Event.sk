@@ -20,7 +20,7 @@ on load:
 	set {_t} to difference between {torksi.event.loader} and now
 	message "&9Event> &7Enabled in &a%{_t}%" to all players
 
-command /event <string> [<string>] [<string>]:
+command /event [<text>] [<text>] [<text>]:
 	usage: &9Do /event help
 	aliases: /e
 	permission: mineplex.admin
@@ -28,18 +28,93 @@ command /event <string> [<string>] [<string>]:
 	trigger:
 		if arg-1 is "help":
 			send "&9Event> &7Displaying Commands:" to player
-			send "&f/e settings: &eView Settings Help" to player
-			send "&f/e tp: &eTeleport to Target" to player
-			send "&f/e tp here: &eTeleport Target to Self" to player
-			send "&f/e tp all: &eTeleport Everyone to Self" to player
-			send "&f/e gadget: &eToggle Gadgets" to player
-			send "&f/e gadget list: &eLists Gadgets (Shows Whitelist)" to player
-			send "&f/e gadget <Gadget>: &eToggle Whitelist for Gadget" to player
-			send "&f/e gadget clear: &eClears Gadget Whitelist" to player
-			send "&f/e silence: &eSilence Chat" to player
-			send "&f/e admin [Player]: &eToggle Event Admin" to player
-			send "&f/e gm [Player]: &eToggle Creative Mode" to player
-			send "&f/e radius: &eToggle Forcefield" to player
-			send "&f/e give: &eGive Item" to player
-			send "&f/e mob: &eSummon Mob" to player
+			send "&f/e settings: &eView Server Settings commands in-game." to player
+			send "&f/e tp: &eTeleport yourself to player." to player
+			send "&f/e tp here: &eTeleport yourself to player." to player
+			send "&f/e tp here all: &eTeleport everyone to your position." to player
+			send "&f/e gadget: &eEnable all cosmetics on this server." to player
+			send "&f/e gadget list: &eList all available cosmetic items." to player
+			send "&f/e gadget <Gadget>: &eEnable gadget on this server." to player
+			send "&f/e gadget clear: &eDisable all cosmetics." to player
+			send "&f/e silence: &eMute the chat for time or permanent. Or unmute it!" to player
+			send "&f/e admin [Player]: &eToggle Event Co-Host for player." to player
+			send "&f/e gm [Player]: &eChange player gamemode to Creative/Survival." to player
+			send "&f/e radius: &eChange/activate your forcefield radius." to player
+			send "&f/e give <item> <amount>: &eGive yourself an item." to player
+			send "&f/e give <player> <item> <amount>: &eGive player an item." to player
+			send "&f/e give all <item> <amount>: &eGive everyone an item." to player
+			send "&f/e mob: &elist all current entities." to player
+			send "&f/e blockbreak: &eToggle global block breaking" to player
+			send "&f/e blockplace: &eToggle global block placing" to player
+			send "&f/e keepinventory: &eToggle keepinventory" to player
+			send "&f/e bc <text>: &eBroadcast a message! [color code supported]" to player
+		if arg-1 is "blockbreak":
+			if {event.blockbreak} is set:
+				delete {event.blockbreak}
+				send "&9Event Settings> &fBlock Break: &aTrue"
+				execute console command "/minecraft:playsound note.pling @a 0 0 0 100000000"
+			else:
+				set {event.blockbreak} to true
+				send "&9Event Settings> &fBlock Break: &cFalse"
+				execute console command "/minecraft:playsound note.pling @a 0 0 0 100000000"
+		if arg-1 is "blockplace":
+			if {event.blockplace} is set:
+				delete {event.blockplace}
+				send "&9Event Settings> &fBlock Place: &aTrue"
+				execute console command "/minecraft:playsound note.pling @a 0 0 0 100000000"
+			else:
+				set {event.blockplace} to true
+				send "&9Event Settings> &fBlock Place: &cFalse"
+				execute console command "/minecraft:playsound note.pling @a 0 0 0 100000000"
+		if arg-1 is "bc":
+			if arg-2 is set:
+				if arg-3 is set:
+					set {event.bc.arg2} to arg-2
+					set {event.bc.arg3} to arg-3
+					replace all "&" with "§" in {event.bc.arg2}
+					replace all "&" with "§" in {event.bc.arg3}
+					send "&9Event> &f%{event.bc.arg2}% %{event.bc.arg3}%" to all players
+					execute console command "/minecraft:playsound note.pling @a 0 0 0 100000000"
+				else if arg-3 is not set:
+					set {event.bc.arg2} to arg-2
+					replace all "&" with "§" in {event.bc.arg2}
+					send "&9Event> &f%{event.bc.arg2}%" to all players
+					execute console command "/minecraft:playsound note.pling @a 0 0 0 100000000"
+		if arg-1 is "damage":
+			if arg-2 is "all":
+				if {event.damage_all} is set:
+					delete {event.damage_all}
+					send "&9Event Settings> &fDamage All: &aTrue"
+					execute console command "/minecraft:playsound note.pling @a 0 0 0 100000000"
+				else:
+					set {event.damage_all} to true
+					send "&9Event Settings> &fDamage All: &cFalse"
+					execute console command "/minecraft:playsound note.pling @a 0 0 0 100000000"
+		if arg-1 is "damage":
+			if arg-2 is "pvp":
+				if {event.damage_pvp} is set:
+					delete {event.damage_pvp}
+					send "&9Event Settings> &fDamage PvP: &aTrue"
+					execute console command "/minecraft:playsound note.pling @a 0 0 0 100000000"
+					disable pvp in player's world
+				else:
+					set {event.damage_pvp} to true
+					send "&9Event Settings> &fDamage PvP: &cFalse"
+					execute console command "/minecraft:playsound note.pling @a 0 0 0 100000000"
+					disable pvp in player's world
 
+
+
+
+#Block Break Event
+on block break:
+	{event.blockbreak} is set
+	cancel the event
+#Block Place Event
+on block place:
+	{event.blockplace} is set
+	cancel the event
+#Damage All Event
+on damage of a player:
+    {event.damage_all} is set
+    cancel event
